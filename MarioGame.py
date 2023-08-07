@@ -38,7 +38,7 @@ class Game:
 
         #self.player = PhysicsEntity(self, 'player', (50, 50), (14, 17))
         self.player_img = load_image('Characters/player/idle/00.png')
-        self.player = Player(self, (50, 150), (self.player_img.get_width(), self.player_img.get_height()))
+        self.player = Player(self, (50, 250), (self.player_img.get_width(), self.player_img.get_height()))
 
         self.tilemap = Tilemap(self, tilesize=16)
         try:

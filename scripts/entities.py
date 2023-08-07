@@ -50,7 +50,7 @@ class PhysicsEntity:
         # found around a rect with a size the same as the tile size
         self.pos[0] += frame_movement[0]
         entity_rect = self.rect()
-        for tile in tilemap.tile_rects_around(self.pos): # Check left/right collisions
+        for tile in tilemap.tile_rects_around(entity_rect.center): # Check left/right collisions
             if entity_rect.colliderect(tile):
                 if frame_movement[0] < 0:
                     self.collisions['left'] = True
@@ -62,7 +62,7 @@ class PhysicsEntity:
 
         self.pos[1] += frame_movement[1]
         entity_rect = self.rect()
-        for tile in tilemap.tile_rects_around(self.pos): # Check top/bottom collisions
+        for tile in tilemap.tile_rects_around(entity_rect.center): # Check top/bottom collisions
             if entity_rect.colliderect(tile):
                 if frame_movement[1] < 0:
                     self.collisions['up'] = True
@@ -105,7 +105,7 @@ class Player(PhysicsEntity):
     
     def update(self, tilemap, movement=(0, 0)):
         super().update(tilemap, movement=(self.x_accel, movement[1]))
-
+        
         # Handle air time and the number of jumps
         self.air_time += 1
         if self.collisions['down']:
