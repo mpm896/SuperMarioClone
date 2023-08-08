@@ -6,7 +6,7 @@ from scripts.tilemap import Tilemap
 
 WINDOW_SIZE = (640, 480)
 FPS = 60
-COLORKEY = (255,255,255)
+COLORKEY = None
 RENDER_SCALE = 1.5
 
 class Game:
@@ -45,15 +45,23 @@ class Game:
             self.tilemap.load('maps/level_01.json')
         except FileNotFoundError:
             pass
-
+        
+        # Get list of tile X coordinates, for camera scroll purposes
+        self.x_loc_list = []
+        for loc in list(self.tilemap.tilemap):
+            pos = self.tilemap.tilemap[loc]['pos'][0]
+            self.x_loc_list.append(pos)
+        self.x_loc_list = list(sorted(set(self.x_loc_list)))
 
     def run(self):
         while True: # Main game loop
             self.display.fill((7, 155, 176))
-
-            if self.player.rect().centerx > 50:
-                self.scroll[0] += (self.player.rect().centerx - 50 - self.scroll[0])
-
+            
+            # Don't scroll in X if in the first 50 pixels of the map of if the right-most tile is at the edge of the screen
+            # The second term of the conditional statement is the pixel position of the last tile (before the bounding wall), minus the scroll value plus the player width. Don't scroll if the last tile position on the display is less than the display width
+            if (100 < self.player.rect().centerx) and (self.x_loc_list[-2] * self.tilemap.tilesize - self.scroll[0] + self.player.size[0] >= self.display.get_width()):
+               self.scroll[0] += (self.player.rect().centerx - 100 - self.scroll[0])
+            
             # Only scroll the Y if player is above a certain height
             if self.player.rect().centery < self.display.get_height() / 2:
                 self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1])
@@ -102,9 +110,3 @@ class Game:
 
 if __name__ == '__main__':
     Game().run()
-
-
-
-
-
-

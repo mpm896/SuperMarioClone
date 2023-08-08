@@ -55,8 +55,8 @@ class Editor:
             self.display.fill((7, 155, 176))
             
             # Set the scroll
-            self.scroll[0] += (self.movement[1] - self.movement[0]) * 2
-            self.scroll[1] += (self.movement[3] - self.movement[2]) * 2
+            self.scroll[0] += (self.movement[1] - self.movement[0]) * 10
+            self.scroll[1] += (self.movement[3] - self.movement[2]) * 10
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
             
             # Render the tilemap

@@ -3,14 +3,13 @@ import pygame, os
 BASE_IMG_PATH = 'data/images/'
 
 def load_image(path, colorkey=None): # If using directly, include filename in path
-    img = pygame.image.load(BASE_IMG_PATH + path).convert()
-    img = img.convert_alpha()
+    img = pygame.image.load(BASE_IMG_PATH + path).convert_alpha() # Since image has transparency already in image, use convert_alpha() instead of convert()
     img.set_colorkey(colorkey)
     return img
 
-def load_images(path, colorkey=(0, 0, 0)):
+def load_images(path, colorkey=None):
     images = []
-    for image in os.listdir(BASE_IMG_PATH + path):
+    for image in sorted(os.listdir(BASE_IMG_PATH + path)):
         if image[0] == '.': # skip hidden files
             pass
         else:
