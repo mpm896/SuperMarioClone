@@ -28,7 +28,7 @@ class Game:
             'block': load_images('Tilesets/blocks', colorkey=COLORKEY),
             'decor': load_images('Tilesets/decor', colorkey=COLORKEY),
         }
-        
+
         # Load all player assets
         for action in next(os.walk('data/images/Characters/player'))[1]: # Gets directory names from the directory to walk
             self.assets['player/' + action] = Animation(load_images('Characters/player/'+ action))
@@ -83,7 +83,7 @@ class Game:
                     if event.key == K_ESCAPE:
                         pygame.quit()
                         sys.exit()
-                    if event.key == K_UP or event.key == K_w:
+                    if event.key == K_UP or event.key == K_w or event.key == K_SPACE:
                         self.player.jump()
                     if event.key == K_DOWN or event.key == K_s:
                         pass
