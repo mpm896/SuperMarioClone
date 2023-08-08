@@ -72,7 +72,7 @@ class PhysicsEntity:
                     entity_rect.bottom = tile.top
                 self.pos[1] = entity_rect.y
 
-        self.last_movement = movement
+        self.last_movement = list(movement)
 
         # Enforce gravity
         self.velocity[1] = min(5, self.velocity[1] + 0.2)
@@ -93,8 +93,9 @@ class Player(PhysicsEntity):
 
         self.air_time = 0
         self.jumps = 1
-        self.x_accel = 0
-        self.speed = 2
+        self.x_accel = 0 # Tracking variable for speedup/slowdown
+        self.last_accel = 0 # Tracking variable for acceleration and turning
+        self.speed = 2 # Max player speed
 
     def jump(self):
         if self.jumps and self.air_time < 5:
@@ -112,33 +113,37 @@ class Player(PhysicsEntity):
             self.air_time = 0
             self.jumps = 1
 
-        # Set the proper action
-        if self.air_time > 4:
-            self.set_action('jump')
-        else:
-            if self.x_accel != 0:
-                self.set_action('run')
-            else:
-                self.set_action('idle')
-
         # Speed up and slow down, with turn animation
         if movement[0] < 0:
             self.x_accel = max(self.x_accel - 0.1, -self.speed)
-            if not self.flip and not self.jump:
-                self.set_action('turn')
+            #if (not self.flip) and self.collisions['down']:
+            #    self.set_action('turn')
         elif movement[0] > 0:
             self.x_accel = min(self.x_accel + 0.1, self.speed)
-            if self.flip and not self.jump:
-                self.set_action('turn')
+            #if self.flip and self.collisions['down']:
+            #    self.set_action('turn')
         else:
             if self.flip:
                 self.x_accel = min(self.x_accel + 0.1, 0)
             else:
                 self.x_accel = max(self.x_accel - 0.1, 0)
 
+        # Set the proper action
+        if self.air_time > 4:
+            self.set_action('jump')
+        else:
+            if movement[0] != 0:
+                if (self.flip) and (self.x_accel > self.last_accel): # If facing left, turning right
+                    self.set_action('turn')
+                elif (not self.flip) and (self.x_accel < self.last_accel): # If facing right, turning left
+                    self.set_action('turn')
+                else:
+                    self.set_action('run')
+            else:
+                self.set_action('idle')
         
-
-    
+        self.last_accel = self.x_accel # Tracking variable for turning 
+        
     def render(self, surface, offset=(0, 0)):
         if self.action == 'idle':
             super().render(surface, offset=offset)
