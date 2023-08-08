@@ -3,6 +3,7 @@ from pygame.locals import *
 from scripts.entities import PhysicsEntity, Player
 from scripts.utils import load_image, load_images, get_image_variation, Spritesheet, Animation
 from scripts.tilemap import Tilemap
+from scripts.cloud import Clouds
 
 WINDOW_SIZE = (640, 480)
 FPS = 60
@@ -45,6 +46,8 @@ class Game:
             self.tilemap.load('maps/level_01.json')
         except FileNotFoundError:
             pass
+
+        self.clouds = Clouds(self, self.assets['decor'][2], count=10)
         
         # Get list of tile X coordinates, for camera scroll purposes
         self.x_loc_list = []
@@ -67,6 +70,9 @@ class Game:
                 self.scroll[1] += (self.player.rect().centery - self.display.get_height() / 2 - self.scroll[1])
 
             render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
+
+            self.clouds.update()
+            self.clouds.render(self.display, offset=render_scroll)
             
             self.tilemap.render(self.display, offset=render_scroll)
 
