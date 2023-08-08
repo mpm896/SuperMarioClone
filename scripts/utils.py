@@ -17,6 +17,23 @@ def load_images(path, colorkey=None):
             images.append(img)
     return images
 
+def get_image_variation(path, string):
+    """
+    Vars: path - path to where the specific image is found
+          string - part of the image name that is unique to that asset (i.e. 'pipe' in Mario)
+    """
+    variation_nums = []
+    count = 0
+    for image in sorted(os.listdir(BASE_IMG_PATH + path)):
+        if image[0] == '.' or image == None: # skip hidden files and None values
+           pass
+        elif string.lower() in image.lower(): 
+            variation_nums.append(count)
+            count += 1
+        else:
+            count += 1
+
+    return variation_nums
 
 # This class handles sprite sheets
 # This was taken from https://www.pygame.org/wiki/Spritesheet

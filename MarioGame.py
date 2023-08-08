@@ -1,7 +1,7 @@
 import pygame, sys, random, os
 from pygame.locals import *
 from scripts.entities import PhysicsEntity, Player
-from scripts.utils import load_image, load_images, Spritesheet, Animation
+from scripts.utils import load_image, load_images, get_image_variation, Spritesheet, Animation
 from scripts.tilemap import Tilemap
 
 WINDOW_SIZE = (640, 480)

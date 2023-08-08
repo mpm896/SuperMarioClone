@@ -139,7 +139,7 @@ class Player(PhysicsEntity):
                     self.set_action('turn')
                 else:
                     self.set_action('run')
-            else:
+            elif movement[0] == 0 and self.x_accel == 0:
                 self.set_action('idle')
         
         self.last_accel = self.x_accel # Tracking variable for turning 
@@ -148,4 +148,8 @@ class Player(PhysicsEntity):
         if self.action == 'idle':
             super().render(surface, offset=offset)
         else:
-            surface.blit(pygame.transform.flip(self.animation.img(), self.flip, False), (self.pos[0] - offset[0] + self.anim_offset[0], self.pos[1] - offset[1]))
+            # Because the 'turn' animation is flipped compared to the others
+            if self.action == 'turn':
+                surface.blit(pygame.transform.flip(self.animation.img(), not self.flip, False), (self.pos[0] - offset[0] + self.anim_offset[0], self.pos[1] - offset[1]))
+            else: 
+                surface.blit(pygame.transform.flip(self.animation.img(), self.flip, False), (self.pos[0] - offset[0] + self.anim_offset[0], self.pos[1] - offset[1]))

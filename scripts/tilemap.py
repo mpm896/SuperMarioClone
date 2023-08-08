@@ -1,7 +1,13 @@
 import pygame, json
+from scripts.utils import get_image_variation
 
-NEIGHBOR_OFFSETS = [(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1)]
-PHYSICS_TILES = {'block', 'pipe'}
+# Up to two tiles away
+NEIGHBOR_OFFSETS = [(0, -1), (-1, -1), (-1, 0), (-1, 1), (0, 1), (1, 1), (1, 0), (1, -1),
+                    (0, -2), (-1, -2), (-2, -2), (-2, -1), (-2, 0), (-2, 1), (-2, 2), (-1, 2), (0, 2), (1, 2), (2, 2), (2, 1), (2, 0), (2, -1), (2, -2), (1, -2)]
+PHYSICS_TILES = {'block'} # Set for assets where all tiles have collisions
+PHYSICS_TILES_VARIANTS = {
+    'decor': get_image_variation('Tilesets/decor', 'pipe')
+} # Dict for assets where only some assets have collisions, such as pipes in the decor assets
 
 class Tilemap:
 
@@ -29,6 +35,9 @@ class Tilemap:
         for tile in self.tiles_around(pos):
             if tile['type'] in PHYSICS_TILES:
                 rects.append(pygame.Rect(tile['pos'][0] * self.tilesize, tile['pos'][1] * self.tilesize, self.tilesize, self.tilesize))
+
+            if tile['type'] in PHYSICS_TILES_VARIANTS and tile['variant'] in PHYSICS_TILES_VARIANTS[tile['type']]:
+                rects.append(pygame.Rect(tile['pos'][0] * self.tilesize, tile['pos'][1] * self.tilesize, self.game.assets[tile['type']][tile['variant']].get_width(), self.game.assets[tile['type']][tile['variant']].get_width()))
 
         return rects
 
