@@ -28,7 +28,12 @@ class Game:
         self.assets = {
             'block': load_images('Tilesets/blocks', colorkey=COLORKEY),
             'decor': load_images('Tilesets/decor', colorkey=COLORKEY),
+            'items': load_images('Misc/items', colorkey=COLORKEY)
         }
+
+        # Load all coin assets
+        for action in next(os.walk('data/images/Misc/coin'))[1]: # Gets directory names from the directory to walk
+            self.assets['coin/' + action] = Animation(load_images('Misc/coin/' + action))
 
         # Load all player assets
         for action in next(os.walk('data/images/Characters/player'))[1]: # Gets directory names from the directory to walk

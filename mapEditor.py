@@ -1,7 +1,7 @@
-import pygame, sys
+import pygame, sys, os
 from pygame.locals import *
 from scripts.tilemap import Tilemap
-from scripts.utils import load_images
+from scripts.utils import load_image, load_images
 
 RENDER_SCALE = 1.5
 WINDOW_SIZE = (640, 480)
@@ -23,8 +23,9 @@ class Editor:
 
         # Add code later to load all assets
         self.assets = {
-            'block': load_images('Tilesets/blocks', colorkey=None),
-            'decor': load_images('Tilesets/decor', colorkey=None),
+            'block': load_images('Tilesets/blocks', colorkey=COLORKEY),
+            'decor': load_images('Tilesets/decor', colorkey=COLORKEY),
+            'items': load_images('Misc/items', colorkey=COLORKEY)
         }
 
         # Clicking-related attributes
