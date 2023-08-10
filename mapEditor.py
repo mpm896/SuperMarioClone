@@ -25,7 +25,8 @@ class Editor:
         self.assets = {
             'block': load_images('Tilesets/blocks', colorkey=COLORKEY),
             'decor': load_images('Tilesets/decor', colorkey=COLORKEY),
-            'items': load_images('Misc/items', colorkey=COLORKEY)
+            'items': load_images('Misc/items', colorkey=COLORKEY),
+            'coin/collect': load_images('Misc/coin/collect')
         }
 
         # Clicking-related attributes
