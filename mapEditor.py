@@ -26,7 +26,8 @@ class Editor:
             'block': load_images('Tilesets/blocks', colorkey=COLORKEY),
             'decor': load_images('Tilesets/decor', colorkey=COLORKEY),
             'items': load_images('Misc/items', colorkey=COLORKEY),
-            'coin/collect': load_images('Misc/coin/collect')
+            'coin/collect': load_images('Misc/coin/collect'),
+            'spawners': load_images('spawners')
         }
 
         # Clicking-related attributes
@@ -47,7 +48,8 @@ class Editor:
             self.tilemap.load(MAP_PATH + MAP_NAME)
         except FileNotFoundError:
             pass
-
+        
+        self.tilemap.editor = True
         self.tile_list = list(self.assets) # Gets a list of keys
         self.tile_group = 0
         self.tile_variant = 0
@@ -84,12 +86,19 @@ class Editor:
             else:
                 self.display.blit(pygame.transform.flip(current_tile_img, False, self.flip), mpos)
 
-            # Add tile to tilemap if click
+            # Add tile to tilemap if click. Treat spawners, on grid, and offgrid separately
             if self.click and self.ongrid: # Tiles snapped to grid
-                self.tilemap.tilemap[str(tile_pos[0]) + ';' + str(tile_pos[1])] = {
-                    'type': self.tile_list[self.tile_group],
-                    'variant': self.tile_variant,
-                    'pos': tile_pos
+                if self.tile_list[self.tile_group] == 'spawners': # If it's a spawner
+                    self.tilemap.spawners[str(tile_pos[0]) + ';' + str(tile_pos[1])] = {
+                        'type': self.tile_list[self.tile_group],
+                        'variant': self.tile_variant,
+                        'pos': tile_pos    
+                    }
+                else:
+                    self.tilemap.tilemap[str(tile_pos[0]) + ';' + str(tile_pos[1])] = {
+                        'type': self.tile_list[self.tile_group],
+                        'variant': self.tile_variant,
+                        'pos': tile_pos
                 }
 
             if self.click and not self.ongrid: # Tiles off the grid
@@ -106,6 +115,9 @@ class Editor:
                 # Delete on grid tiles
                 if tile_loc in self.tilemap.tilemap:
                     del self.tilemap.tilemap[tile_loc]
+
+                if tile_loc in self.tilemap.spawners:
+                    del self.tilemap.spawners[tile_loc]
                 
                 # Delete off grid tiles
                 for tile in self.tilemap.offgrid_tiles.copy():

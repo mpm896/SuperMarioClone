@@ -8,6 +8,7 @@ from scripts.cloud import Clouds
 WINDOW_SIZE = (640, 480)
 FPS = 60
 COLORKEY = None
+BACKGROUND_COLOR = (7, 180, 220)
 RENDER_SCALE = 1.5
 
 class Game:
@@ -28,12 +29,25 @@ class Game:
         self.assets = {
             'block': load_images('Tilesets/blocks', colorkey=COLORKEY),
             'decor': load_images('Tilesets/decor', colorkey=COLORKEY),
-            'items': load_images('Misc/items', colorkey=COLORKEY)
+            'items': load_images('Misc/items', colorkey=COLORKEY),
+            'spawners': load_images('spawners')
         }
+
+        self.tilemap = Tilemap(self, tilesize=16)
+        try:
+            self.tilemap.load('maps/level_01.json')
+        except FileNotFoundError:
+            pass
+
+        # Get player spawning positions
+        for loc in self.tilemap.spawners:
+            if self.tilemap.spawners[loc]['variant'] == 0: # Player
+                player_pos = (self.tilemap.spawners[loc]['pos'][0] * self.tilemap.tilesize,
+                              self.tilemap.spawners[loc]['pos'][1] * self.tilemap.tilesize)
 
         # Load all coin assets
         for action in next(os.walk('data/images/Misc/coin'))[1]: # Gets directory names from the directory to walk
-            self.assets['coin/' + action] = load_images('Misc/coin/' + action)
+            self.assets['coin/' + action] = Animation(load_images('Misc/coin/' + action))
 
         # Load all player assets
         for action in next(os.walk('data/images/Characters/player'))[1]: # Gets directory names from the directory to walk
@@ -42,15 +56,8 @@ class Game:
         # Blocks are as follows: 00 - ground; 01 - breakable; 02 - used; 03 - mystery; 04 - static block
         self.scroll = [0, 0]
 
-        #self.player = PhysicsEntity(self, 'player', (50, 50), (14, 17))
         self.player_img = load_image('Characters/player/idle/00.png')
-        self.player = Player(self, (50, 250), (self.player_img.get_width(), self.player_img.get_height()))
-
-        self.tilemap = Tilemap(self, tilesize=16)
-        try:
-            self.tilemap.load('maps/level_01.json')
-        except FileNotFoundError:
-            pass
+        self.player = Player(self, player_pos, (self.player_img.get_width(), self.player_img.get_height()))
 
         self.clouds = Clouds(self, self.assets['decor'][2], count=10)
         
@@ -63,7 +70,7 @@ class Game:
 
     def run(self):
         while True: # Main game loop
-            self.display.fill((7, 155, 176))
+            self.display.fill(BACKGROUND_COLOR)
             
             # Don't scroll in X if in the first 50 pixels of the map of if the right-most tile is at the edge of the screen
             # The second term of the conditional statement is the pixel position of the last tile (before the bounding wall), minus the scroll value plus the player width. Don't scroll if the last tile position on the display is less than the display width

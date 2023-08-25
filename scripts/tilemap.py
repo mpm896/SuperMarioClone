@@ -16,6 +16,8 @@ class Tilemap:
         self.tilesize = tilesize
         self.tilemap = {}
         self.offgrid_tiles = []
+        self.spawners = {}
+        self.editor = False
 
     # Get tiles directly around the position (i.e. tiles directly next to the player)
     def tiles_around(self, pos): 
@@ -52,13 +54,18 @@ class Tilemap:
         for x in range(offset[0] // self.tilesize - 5, (offset[0] + surface.get_width()) // self.tilesize + 1):
             for y in range(offset[1] // self.tilesize, (offset[1] + surface.get_height()) // self.tilesize + 1):
                 
-                # Render ongrid tiles
+                # Render ongrid tiles and spawners
                 loc = str(x) + ';' + str(y)
                 if loc in self.tilemap:
                     tile = self.tilemap[loc]
                     surface.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] * self.tilesize - offset[0],
-                                                                                tile['pos'][1] * self.tilesize - offset[1]))
-
+                                                                           tile['pos'][1] * self.tilesize - offset[1]))
+                if self.editor: 
+                    if loc in self.spawners:
+                        tile = self.spawners[loc]
+                        surface.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] * self.tilesize - offset[0],
+                                                                                    tile['pos'][1] * self.tilesize - offset[1]))
+                    
     # Load map
     def load(self, path):
         f = open(path, 'r')
@@ -68,6 +75,7 @@ class Tilemap:
         self.tilemap = map_data['tilemap']
         self.tilesize = map_data['tilesize']
         self.offgrid_tiles = map_data['offgrid']
+        self.spawners = map_data['spawners']
 
     # Save map
     def save(self, path):
@@ -75,6 +83,7 @@ class Tilemap:
         json.dump({
             'tilemap': self.tilemap,
             'tilesize': self.tilesize,
-            'offgrid': self.offgrid_tiles
+            'offgrid': self.offgrid_tiles,
+            'spawners': self.spawners
         }, f)
         f.close()

@@ -103,6 +103,8 @@ class Player(PhysicsEntity):
             self.jumps -= 1
             self.air_time = 5
             return True
+        
+    
     
     def update(self, tilemap, movement=(0, 0)):
         super().update(tilemap, movement=(self.x_accel, movement[1]))
@@ -116,12 +118,8 @@ class Player(PhysicsEntity):
         # Speed up and slow down, with turn animation
         if movement[0] < 0:
             self.x_accel = max(self.x_accel - 0.1, -self.speed)
-            #if (not self.flip) and self.collisions['down']:
-            #    self.set_action('turn')
         elif movement[0] > 0:
             self.x_accel = min(self.x_accel + 0.1, self.speed)
-            #if self.flip and self.collisions['down']:
-            #    self.set_action('turn')
         else:
             if self.flip:
                 self.x_accel = min(self.x_accel + 0.1, 0)
